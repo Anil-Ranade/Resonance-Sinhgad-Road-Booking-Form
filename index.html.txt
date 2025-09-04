@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resonance - Booking Request Form</title>
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Apply Inter font and a smooth background */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8; /* Softer, light blue-gray background */
+        }
+        /* Style for the container to center and add padding */
+        .container-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        /* Style for the two-step form to hide/show sections */
+        .form-step {
+            display: none;
+        }
+        .form-step.active {
+            display: block;
+        }
+        /* A custom style for disabled fields to show the "not-allowed" cursor */
+        .cursor-not-allowed {
+            cursor: not-allowed;
+        }
+        /* Custom styles for plain color buttons */
+        .btn-plain-new {
+            background-color: #3b82f6; /* Plain blue */
+            transition: all 0.3s ease-in-out;
+        }
+        .btn-plain-new:hover {
+            background-color: #2563eb; /* Darker blue on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .btn-plain-change {
+            background-color: #22c55e; /* Plain green */
+            transition: all 0.3s ease-in-out;
+        }
+        .btn-plain-change:hover {
+            background-color: #16a34a; /* Darker green on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .btn-plain-cancel {
+            background-color: #ef4444; /* Plain red */
+            transition: all 0.3s ease-in-out;
+        }
+        .btn-plain-cancel:hover {
+            background-color: #dc2626; /* Darker red on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .btn-solid-clear {
+            background-color: #4a5568;
+            transition: all 0.3s ease-in-out;
+        }
+        .btn-solid-clear:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div class="container-wrapper">
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-200">
+            <div class="text-center mb-6">
+                <!-- Main Heading -->
+                <h1 class="text-[26px] font-bold text-gray-800 tracking-wide whitespace-nowrap">Resonance - Sinhgad Road</h1>
+                <!-- New static secondary heading -->
+                <h2 class="text-xl font-bold text-gray-800 tracking-wide">Booking Request Form</h2>
+                <!-- The horizontal line is now bolder and black -->
+                <div class="border-b-2 border-black w-full my-4"></div>
+                
+                <!-- Added new section for important details -->
+                <!-- The 'Please note...' section is now justified. -->
+                <div class="text-sm text-gray-700 space-y-3 mb-6" style="text-align: justify;">
+                    <p class="font-bold">Please note the following important details regarding your booking request:</p>
+                    <p><strong>Booking Confirmation:</strong> Your requested slot is considered confirmed if you do not receive any communication from us within 24 hours of submitting this request.</p>
+                    <p><strong>WhatsApp Submission:</strong> After you click "Send Request via WhatsApp," a pre-filled message will open. You must click the 'Send' button in WhatsApp to successfully transmit your request to us.</p>
+                    <p><strong>Rates and Payment:</strong> The rates and total amount provided are for informational purposes only. No payment is due at this stage of the booking process.</p>
+                </div>
+
+                <!-- Updated to a grid layout to make all buttons equal width -->
+                <div class="grid grid-cols-4 gap-2 mt-4">
+                    <button id="newButton" class="text-white font-bold py-2 px-4 rounded-lg btn-plain-new">New</button>
+                    <button id="changeButton" class="text-white font-bold py-2 px-4 rounded-lg btn-plain-change">Change</button>
+                    <button id="cancelButton" class="text-white font-bold py-2 px-4 rounded-lg btn-plain-cancel">Cancel</button>
+                    <!-- The "Clear" button now has white lettering and a darker background -->
+                    <button id="clearButton" class="text-white font-bold py-2 px-4 rounded-lg btn-solid-clear">Clear</button>
+                </div>
+            </div>
+            
+            <!-- Dynamic Form Title -->
+            <h2 id="dynamic-form-title" class="text-xl font-bold text-center text-gray-800 mb-6 hidden"></h2>
+
+            <!-- The form container, initially hidden -->
+            <div id="form-container" class="hidden">
+                <form id="bookingForm" class="space-y-4">
+
+                    <!-- Step 1: Input Fields for New Booking -->
+                    <div id="step1-new" class="form-step active space-y-4">
+                        
+                        <!-- Session Type Field -->
+                        <div>
+                            <label for="performanceType" class="block text-sm font-medium text-gray-700">Session type</label>
+                            <select id="performanceType" name="performanceType" required
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="" disabled selected>Select an option</option>
+                                <option value="Karaoke">Karaoke</option>
+                                <option value="Live with musicians">Live with musicians</option>
+                                <option value="Band">Band</option>
+                            </select>
+                        </div>
+
+                        <!-- Dynamic Field Container -->
+                        <div id="dynamicFieldContainer" class="hidden"></div>
+                        
+                        <!-- Recommendation Message Container -->
+                        <div id="recommendationMessage" class="hidden text-sm p-4 rounded-lg bg-yellow-50 border border-yellow-200 text-yellow-800">
+                            <!-- Recommendation message will be dynamically inserted here -->
+                        </div>
+
+                        <!-- Studio Selection Field (dynamically updated) -->
+                        <div>
+                            <label for="studioSelect" class="block text-sm font-medium text-gray-700">Select a Studio</label>
+                            <div id="studioSelectContainer" class="mt-1">
+                                <!-- The `disabled` attribute here makes it inactive by default -->
+                                <select id="studioSelect" name="studioSelect" required disabled
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm cursor-not-allowed">
+                                    <option value="" disabled selected>Choose a studio</option>
+                                    <option value="Studio A">Studio A</option>
+                                    <option value="Studio B">Studio B</option>
+                                    <option value="Studio C">Studio C</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Date Field -->
+                        <div>
+                            <label for="dateInput" class="flex items-center text-sm font-medium text-gray-700">
+                                Date
+                                <span id="dateMessage" class="hidden ml-2 text-xs text-red-600">Click the Calendar Icon below</span>
+                            </label>
+                            <input type="date" id="dateInput" name="date" required disabled
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm cursor-not-allowed"
+                                placeholder="dd/mm/yyyy">
+                        </div>
+                        
+                        <!-- Start Time Field -->
+                        <div>
+                            <label for="startTime" class="block text-sm font-medium text-gray-700">Start Time <span class="text-sm text-gray-500">(We operate from 08.00 AM to 10.00 PM)</span></label>
+                            <select id="startTime" name="startTime" required disabled
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm cursor-not-allowed">
+                                <option value="" disabled selected>Choose a start time</option>
+                            </select>
+                        </div>
+                        
+                        <!-- End Time Field -->
+                        <div>
+                            <label for="endTime" class="block text-sm font-medium text-gray-700">End Time <span class="text-sm text-gray-500">(Should be more than Start Time at least by one hour)</span></label>
+                            <select id="endTime" name="endTime" required disabled
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm cursor-not-allowed">
+                                <option value="" disabled selected>Choose a start time first</option>
+                            </select>
+                        </div>
+
+                        <!-- Next Button -->
+                        <button type="button" id="nextButton" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            Next
+                        </button>
+                    </div>
+
+                    <!-- Step 1: Input Fields for Cancellation -->
+                    <div id="step1-cancel" class="form-step space-y-4">
+                         <!-- Date Field -->
+                        <div>
+                            <label for="cancelDateInput" class="block text-sm font-medium text-gray-700">Date for which earlier booking is to be cancelled</label>
+                            <input type="date" id="cancelDateInput" name="cancelDate" required
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                placeholder="dd/mm/yyyy">
+                        </div>
+                        <button type="button" id="nextCancelButton" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            Next
+                        </button>
+                    </div>
+                    
+                    <!-- Step 1: Input Fields for Change -->
+                    <div id="step1-change" class="form-step space-y-4">
+                        <!-- New mandatory field for earlier booking date -->
+                        <div>
+                            <label for="earlierBookingDate" class="block text-sm font-medium text-gray-700">Date of earlier booking</label>
+                            <input type="date" id="earlierBookingDate" name="earlierBookingDate" required
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                placeholder="dd/mm/yyyy">
+                        </div>
+                        
+                        <p class="block text-sm font-medium text-gray-700">What do you want to change?</p>
+                        <div class="mt-2 space-y-2">
+                            <div class="flex items-center">
+                                <input id="changeSessionType" name="changeOptions" type="checkbox" value="Session type" class="h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                <label for="changeSessionType" class="ml-2 block text-sm text-gray-700">Session type</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="changeStudio" name="changeOptions" type="checkbox" value="Studio" class="h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                <label for="changeStudio" class="ml-2 block text-sm text-gray-700">Studio</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="changeDate" name="changeOptions" type="checkbox" value="Date" class="h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                <label for="changeDate" class="ml-2 block text-sm text-gray-700">Date</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="changeStartTime" name="changeOptions" type="checkbox" value="Start Time" class="h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                <label for="changeStartTime" class="ml-2 block text-sm text-gray-700">Start Time</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="changeEndTime" name="changeOptions" type="checkbox" value="End Time" class="h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                <label for="changeEndTime" class="ml-2 block text-sm text-gray-700">End Time</label>
+                            </div>
+                        </div>
+
+                        <!-- Container for dynamically generated fields -->
+                        <div id="dynamicChangeFields" class="space-y-4"></div>
+                        
+                        <button type="button" id="nextChangeButton" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                            Next
+                        </button>
+                    </div>
+
+                    <!-- Step 2: Summary and Final Button for New Booking -->
+                    <div id="step2-new" class="form-step space-y-4">
+                        <h2 class="text-xl font-semibold text-gray-800">Booking Summary</h2>
+                        <div id="summary" class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <!-- Summary details will be populated here by JavaScript -->
+                        </div>
+
+                        <!-- Buttons for Step 2 -->
+                        <div class="flex space-x-4">
+                            <button type="button" id="backButton" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors">
+                                Back
+                            </button>
+                            <!-- The send button is now a type="button" with a dedicated listener -->
+                            <button type="button" id="sendButton" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white btn-plain-new">
+                                Send Request via WhatsApp
+                            </button>
+                        </div>
+                    </div>
+
+                     <!-- Step 2: Summary and Final Button for Cancellation -->
+                    <div id="step2-cancel" class="form-step space-y-4">
+                        <h2 class="text-xl font-semibold text-gray-800">Cancellation Summary</h2>
+                        <div id="cancel-summary" class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <!-- Cancellation summary details will be populated here by JavaScript -->
+                        </div>
+                        <div class="flex space-x-4">
+                            <button type="button" id="backCancelButton" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors">
+                                Back
+                            </button>
+                            <button type="button" id="sendCancelButton" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white btn-plain-cancel">
+                                Send Cancellation Request via WhatsApp
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 2: Summary and Final Button for Change -->
+                    <div id="step2-change" class="form-step space-y-4">
+                        <h2 class="text-xl font-semibold text-gray-800">Change Summary</h2>
+                        <div id="change-summary" class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <!-- Change summary details will be populated here by JavaScript -->
+                        </div>
+                        <div class="flex space-x-4">
+                            <button type="button" id="backChangeButton" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors">
+                                Back
+                            </button>
+                            <button type="button" id="sendChangeButton" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-bold text-white btn-plain-change">
+                                Send Change Request via WhatsApp
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+
+    <script>
+        // Get the top-level buttons and form container
+        const newButton = document.getElementById('newButton');
+        const changeButton = document.getElementById('changeButton');
+        const cancelButton = document.getElementById('cancelButton');
+        const clearButton = document.getElementById('clearButton');
+        const formContainer = document.getElementById('form-container');
+        const dynamicFormTitle = document.getElementById('dynamic-form-title');
+
+        // Get the form elements
+        const step1New = document.getElementById('step1-new');
+        const step1Cancel = document.getElementById('step1-cancel');
+        const step1Change = document.getElementById('step1-change');
+        const step2New = document.getElementById('step2-new');
+        const step2Cancel = document.getElementById('step2-cancel');
+        const step2Change = document.getElementById('step2-change');
+
+        const nextButton = document.getElementById('nextButton');
+        const nextCancelButton = document.getElementById('nextCancelButton');
+        const nextChangeButton = document.getElementById('nextChangeButton');
+        const backButton = document.getElementById('backButton');
+        const backCancelButton = document.getElementById('backCancelButton');
+        const backChangeButton = document.getElementById('backChangeButton');
+        const sendButton = document.getElementById('sendButton');
+        const sendCancelButton = document.getElementById('sendCancelButton');
+        const sendChangeButton = document.getElementById('sendChangeButton');
+        const summaryDiv = document.getElementById('summary');
+        const cancelSummaryDiv = document.getElementById('cancel-summary');
+        const changeSummaryDiv = document.getElementById('change-summary');
+        const recommendationMessageDiv = document.getElementById('recommendationMessage');
+        const dynamicChangeFieldsDiv = document.getElementById('dynamicChangeFields');
+
+        const performanceTypeSelect = document.getElementById('performanceType');
+        const dynamicFieldContainer = document.getElementById('dynamicFieldContainer');
+        const studioSelectContainer = document.getElementById('studioSelectContainer');
+        const dateInput = document.getElementById('dateInput');
+        const dateMessage = document.getElementById('dateMessage');
+        const cancelDateInput = document.getElementById('cancelDateInput');
+        const earlierBookingDateInput = document.getElementById('earlierBookingDate'); // NEW FIELD
+        const startTimeSelect = document.getElementById('startTime');
+        const endTimeSelect = document.getElementById('endTime');
+        const form = document.getElementById('bookingForm');
+        
+        const changeCheckboxes = document.querySelectorAll('input[name="changeOptions"]');
+        
+        // A JavaScript object to map each studio to its WhatsApp number
+        const studioPhoneNumbers = {
+            'Studio A': '919822029235', // Your number for testing
+            'Studio B': '919822029235', // Your number for testing
+            'Studio C': '919822029235'  // Your number for testing
+        };
+        
+        // A JavaScript object to hold studio-specific time ranges
+        const studioTimeRanges = {
+            'Studio A': { start: 8, end: 19 },
+            'Studio B': { start: 8, end: 22 },
+            'Studio C': { start: 8, end: 22 }
+        };
+
+        // --- Core Form Management Functions ---
+
+        // Function to set up the form for a new booking
+        function setupNewBookingForm() {
+            step1New.classList.add('active');
+            step1Cancel.classList.remove('active');
+            step1Change.classList.remove('active');
+            step2New.classList.remove('active');
+            step2Cancel.classList.remove('active');
+            step2Change.classList.remove('active');
+            dynamicFieldContainer.classList.add('hidden');
+            recommendationMessageDiv.classList.add('hidden');
+            dateMessage.classList.add('hidden');
+            
+            // Disable all fields and the next button
+            // The studio select is now disabled here
+            updateStudioOptions(['Studio A', 'Studio B', 'Studio C'], 'studioSelectContainer', 'studioSelect', true);
+            dateInput.disabled = true;
+            dateInput.classList.add('cursor-not-allowed');
+            startTimeSelect.disabled = true;
+            startTimeSelect.classList.add('cursor-not-allowed');
+            endTimeSelect.disabled = true;
+            endTimeSelect.classList.add('cursor-not-allowed');
+            
+            // Do not pre-populate the time fields
+            startTimeSelect.innerHTML = '<option value="" disabled selected>Choose a start time</option>';
+            endTimeSelect.innerHTML = '<option value="" disabled selected>Choose a start time first</option>';
+
+            nextButton.disabled = true;
+            nextButton.classList.add('disabled:opacity-50', 'disabled:cursor-not-allowed');
+        }
+
+        // Function to set up the form for a cancellation
+        function setupCancelForm() {
+            step1Cancel.classList.add('active');
+            step1New.classList.remove('active');
+            step1Change.classList.remove('active');
+            step2New.classList.remove('active');
+            step2Cancel.classList.remove('active');
+            step2Change.classList.remove('active');
+            nextCancelButton.disabled = true;
+            nextCancelButton.classList.add('disabled:opacity-50', 'disabled:cursor-not-allowed');
+            // Hide all other elements from the new booking form
+            dynamicFieldContainer.classList.add('hidden');
+            recommendationMessageDiv.classList.add('hidden');
+        }
+        
+        // Function to set up the form for a change request
+        function setupChangeForm() {
+            step1Change.classList.add('active');
+            step1New.classList.remove('active');
+            step1Cancel.classList.remove('active');
+            step2New.classList.remove('active');
+            step2Cancel.classList.remove('active');
+            step2Change.classList.remove('active');
+            dynamicChangeFieldsDiv.innerHTML = '';
+            nextChangeButton.disabled = true;
+            nextChangeButton.classList.add('disabled:opacity-50', 'disabled:cursor-not-allowed');
+            
+            // Uncheck all checkboxes and enable them
+            changeCheckboxes.forEach(checkbox => {
+                checkbox.disabled = false;
+                checkbox.checked = false; 
+            });
+            // Also enable the new date field
+            earlierBookingDateInput.disabled = false;
+        }
+        
+        // Event listeners for the top-level buttons
+        newButton.addEventListener('click', () => {
+            form.reset();
+            formContainer.classList.remove('hidden');
+            dynamicFormTitle.textContent = 'New Booking Request Form';
+            dynamicFormTitle.classList.remove('hidden', 'text-green-600', 'text-red-600');
+            dynamicFormTitle.classList.add('text-blue-600');
+            setupNewBookingForm();
+        });
+
+        changeButton.addEventListener('click', () => {
+            form.reset();
+            formContainer.classList.remove('hidden');
+            dynamicFormTitle.textContent = 'Change Existing Booking Request Form';
+            dynamicFormTitle.classList.remove('hidden', 'text-blue-600', 'text-red-600');
+            dynamicFormTitle.classList.add('text-green-600');
+            setupChangeForm();
+        });
+
+        cancelButton.addEventListener('click', () => {
+            form.reset();
+            formContainer.classList.remove('hidden');
+            dynamicFormTitle.textContent = 'Cancel Existing Booking Request Form';
+            dynamicFormTitle.classList.remove('hidden', 'text-blue-600', 'text-green-600');
+            dynamicFormTitle.classList.add('text-red-600');
+            setupCancelForm();
+        });
+
+        clearButton.addEventListener('click', () => {
+            // Hide the form container
+            formContainer.classList.add('hidden');
+            dynamicFormTitle.classList.add('hidden');
+            // Reset both form sections to their initial state
+            form.reset();
+        });
+
+        // Function to update the studio options dropdown
+        function updateStudioOptions(options, containerId, selectName, disabled) {
+            const container = document.getElementById(containerId);
+            // Check if the container element exists before proceeding
+            if (!container) {
+                console.error(`Element with ID '${containerId}' not found.`);
+                return;
+            }
+            container.innerHTML = '';
+            
+            const isDisabledClass = disabled ? 'cursor-not-allowed' : '';
+            const isDisabledAttr = disabled ? 'disabled' : '';
+
+            if (options.length === 1) {
+                const studioName = options[0];
+                const studioHtml = `
+                    <input type="text" id="${selectName}" name="${selectName}" value="${studioName}" readonly
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-gray-100 ${isDisabledClass}">
+                `;
+                container.innerHTML = studioHtml;
+            } else {
+                let optionsHtml = '<option value="" disabled selected>Choose a studio</option>';
+                options.forEach(studio => {
+                    optionsHtml += `<option value="${studio}">${studio}</option>`;
+                });
+                const studioHtml = `
+                    <select id="${selectName}" name="${selectName}" required ${isDisabledAttr}
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ${isDisabledClass}">
+                        ${optionsHtml}
+                    </select>
+                `;
+                container.innerHTML = studioHtml;
+            }
+        }
+
+        // Function to check if the entire form is valid and enable the next button
+        function checkFormValidity() {
+            const isPerformanceTypeSelected = performanceTypeSelect.value !== '';
+            let isDynamicFieldFilled = false;
+            
+            if (performanceTypeSelect.value === 'Band') {
+                const checkboxes = dynamicFieldContainer.querySelectorAll('input[type="checkbox"]');
+                isDynamicFieldFilled = Array.from(checkboxes).some(cb => cb.checked);
+            } else {
+                const dynamicSelect = dynamicFieldContainer.querySelector('select');
+                isDynamicFieldFilled = dynamicFieldContainer.classList.contains('hidden') || (dynamicSelect && dynamicSelect.value !== '');
+            }
+            
+            const studioElement = studioSelectContainer.querySelector('[name="studioSelect"]');
+            const isStudioSelected = studioElement && (studioElement.value !== '' || studioElement.value !== null);
+
+            const isDateSelected = dateInput.value !== '';
+            const isStartTimeSelected = startTimeSelect.value !== '';
+            const isEndTimeSelected = endTimeSelect.value !== '';
+            
+            if (isPerformanceTypeSelected && isDynamicFieldFilled && isStudioSelected && isDateSelected && isStartTimeSelected && isEndTimeSelected) {
+                nextButton.disabled = false;
+                nextButton.classList.remove('disabled:opacity-50', 'disabled:cursor-not-allowed');
+            } else {
+                nextButton.disabled = true;
+                nextButton.classList.add('disabled:opacity-50', 'disabled:cursor-not-allowed');
+            }
+        }
+        
+        // New function to get the rate based on selections
+        function getRate(performanceType, dynamicValue, studio) {
+            if (performanceType === 'Karaoke') {
+                if (dynamicValue === '1-5 participants') {
+                    if (studio === 'Studio C') return 'Rs 250 per hour';
+                    if (studio === 'Studio B') return 'Rs 300 per hour';
+                    if (studio === 'Studio A') return 'Rs 400 per hour';
+                } else if (dynamicValue === '6-10 participants') {
+                    if (studio === 'Studio B') return 'Rs 300 per hour';
+                    if (studio === 'Studio A') return 'Rs 400 per hour';
+                } else if (dynamicValue === '11-20 participants') {
+                    return 'Rs 400 per hour';
+                } else if (dynamicValue === '21-30 participants') {
+                    return 'Rs 500 per hour';
+                }
+            } else if (performanceType === 'Live with musicians') {
+                if (dynamicValue === '1-2 musicians') {
+                    if (studio === 'Studio C') return 'Rs 350 per hour';
+                    if (studio === 'Studio B') return 'Rs 400 per hour';
+                    if (studio === 'Studio A') return 'Rs 600 per hour';
+                } else if (dynamicValue === '3-4 musicians') {
+                    if (studio === 'Studio B') return 'Rs 400 per hour';
+                    if (studio === 'Studio A') return 'Rs 600 per hour';
+                } else if (dynamicValue === '5 musicians') {
+                    if (studio === 'Studio B') return 'Rs 500 per hour';
+                    if (studio === 'Studio A') return 'Rs 600 per hour';
+                } else if (dynamicValue === '6-8 musicians') {
+                    return 'Rs 600 per hour';
+                } else if (dynamicValue === '9-10 musicians') {
+                    return 'Rs 800 per hour';
+                }
+            } else if (performanceType === 'Band') {
+                return 'Rs 500 per hour';
+            }
+            return 'Rate not available';
+        }
+        
+        // Update recommendation for New and Change
+        function updateRecommendation(performanceType, dynamicValue, recommendationContainer, studioSelectContainer, studioSelectName) {
+            let studios = [];
+            let recommendedStudio = null;
+            const isDynamicFieldSelected = dynamicValue !== '' && dynamicValue !== null;
+
+            if (performanceType === 'Karaoke' && isDynamicFieldSelected) {
+                if (dynamicValue === '1-5 participants') {
+                    studios = [{ name: 'Studio C', rate: 'Rs 250 per hour', recommended: true }, { name: 'Studio B', rate: 'Rs 300 per hour' }, { name: 'Studio A', rate: 'Rs 400 per hour' }];
+                } else if (dynamicValue === '6-10 participants') {
+                    studios = [{ name: 'Studio B', rate: 'Rs 300 per hour', recommended: true }, { name: 'Studio A', rate: 'Rs 400 per hour' }];
+                } else if (dynamicValue === '11-20 participants') {
+                    studios = [{ name: 'Studio A', rate: 'Rs 400 per hour', recommended: true }];
+                } else if (dynamicValue === '21-30 participants') {
+                    studios = [{ name: 'Studio A', rate: 'Rs 500 per hour', recommended: true }];
+                }
+            } else if (performanceType === 'Live with musicians' && isDynamicFieldSelected) {
+                if (dynamicValue === '1-2 musicians') {
+                    studios = [{ name: 'Studio C', rate: 'Rs 350 per hour', recommended: true }, { name: 'Studio B', rate: 'Rs 400 per hour' }, { name: 'Studio A', rate: 'Rs 600 per hour' }];
+                } else if (dynamicValue === '3-4 musicians') {
+                    studios = [{ name: 'Studio B', rate: 'Rs 400 per hour', recommended: true }, { name: 'Studio A', rate: 'Rs 600 per hour' }];
+                } else if (dynamicValue === '5 musicians') {
+                    studios = [{ name: 'Studio B', rate: 'Rs 500 per hour', recommended: true }, { name: 'Studio A', rate: 'Rs 600 per hour' }];
+                } else if (dynamicValue === '6-8 musicians') {
+                    studios = [{ name: 'Studio A', rate: 'Rs 600 per hour', recommended: true }];
+                } else if (dynamicValue === '9-10 musicians') {
+                    studios = [{ name: 'Studio A', rate: 'Rs 800 per hour', recommended: true }];
+                }
+            } else if (performanceType === 'Band' && isDynamicFieldSelected) {
+                studios = [{ name: 'Studio A', rate: 'Rs 500 per hour', recommended: true }];
+            }
+
+            if (studios.length > 0) {
+                let messageHtml = '';
+                
+                messageHtml += `<p class="font-semibold mb-2">You may book:</p>`;
+
+                studios.forEach(studio => {
+                    const rateClass = studio.recommended ? 'font-bold' : '';
+                    if (studio.recommended) {
+                        recommendedStudio = studio;
+                    }
+                    messageHtml += `
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="${rateClass}">${studio.name}</span>
+                            <span class="${rateClass}">${studio.rate}</span>
+                        </div>
+                    `;
+                });
+                
+                if (recommendedStudio) {
+                     messageHtml += `<p class="mt-4 font-semibold">We strongly recommend you to book <span class="font-bold">${recommendedStudio.name}</span></p>`;
+                }
+
+                recommendationContainer.innerHTML = messageHtml;
+                recommendationContainer.classList.remove('hidden');
+            } else {
+                recommendationContainer.classList.add('hidden');
+            }
+            
+            if (isDynamicFieldSelected && studios.length > 0) {
+                updateStudioOptions(studios.map(s => s.name), studioSelectContainer.id, studioSelectName, false);
+                 // Fix: If there is only one studio option, enable the date field immediately
+                if (studios.length === 1) {
+                     dateInput.disabled = false;
+                     dateInput.classList.remove('cursor-not-allowed');
+                     dateMessage.classList.remove('hidden');
+                } else {
+                    dateInput.disabled = true;
+                    dateInput.classList.add('cursor-not-allowed');
+                    dateMessage.classList.add('hidden');
+                }
+            } else {
+                updateStudioOptions([''], studioSelectContainer.id, studioSelectName, true);
+            }
+        }
+        
+        // Add event listeners to each field to enable the next one
+        performanceTypeSelect.addEventListener('change', () => {
+            const performanceType = performanceTypeSelect.value;
+            dynamicFieldContainer.innerHTML = '';
+            dynamicFieldContainer.classList.add('hidden');
+            recommendationMessageDiv.classList.add('hidden');
+            dateMessage.classList.add('hidden');
+            
+            // Fix: When performance type changes, disable everything downstream
+            updateStudioOptions([''], 'studioSelectContainer', 'studioSelect', true);
+            dateInput.disabled = true;
+            dateInput.classList.add('cursor-not-allowed');
+            startTimeSelect.disabled = true;
+            startTimeSelect.classList.add('cursor-not-allowed');
+            endTimeSelect.disabled = true;
+            endTimeSelect.classList.add('cursor-not-allowed');
+            
+            // Do not pre-populate the time fields
+            startTimeSelect.innerHTML = '<option value="" disabled selected>Choose a start time</option>';
+            endTimeSelect.innerHTML = '<option value="" disabled selected>Choose a start time first</option>';
+
+            nextButton.disabled = true;
+            nextButton.classList.add('disabled:opacity-50', 'disabled:cursor-not-allowed');
+            
+            if (performanceType === 'Karaoke' || performanceType === 'Live with musicians') {
+                dynamicFieldContainer.classList.remove('hidden');
+                const labelText = 'Group size';
+                const placeholderText = 'Select a group size';
+                const optionsHtml = performanceType === 'Karaoke'
+                    ? '<option value="1-5 participants">1-5 participants</option><option value="6-10 participants">6-10 participants</option><option value="11-20 participants">11-20 participants</option><option value="21-30 participants">21-30 participants</option>'
+                    : '<option value="1-2 musicians">1-2 musicians</option><option value="3-4 musicians">3-4 musicians</option><option value="5 musicians">5 musicians</option><option value="6-8 musicians">6-8 musicians</option><option value="9-10 musicians">9-10 musicians</option>';
+                dynamicFieldContainer.innerHTML = `
+                    <div>
+                        <label for="dynamicSelect" class="block text-sm font-medium text-gray-700">${labelText}</label>
+                        <select id="dynamicSelect" name="dynamicSelect" required
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <option value="" disabled selected>${placeholderText}</option>
+                            ${optionsHtml}
+                        </select>
+                    </div>
+                `;
+                const dynamicSelect = dynamicFieldContainer.querySelector('select');
+                dynamicSelect.addEventListener('change', () => {
+                    updateRecommendation(performanceType, dynamicSelect.value, recommendationMessageDiv, studioSelectContainer, 'studioSelect');
+                    // Fix: Enable the next field (studio) only after this one is completed
+                    const studioElement = studioSelectContainer.querySelector('[name="studioSelect"]');
+                    studioElement.disabled = false;
+                    studioElement.classList.remove('cursor-not-allowed');
+                });
+            } else if (performanceType === 'Band') {
+                 dynamicFieldContainer.classList.remove('hidden');
+                 const checkboxHtml = `
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Let us know your requirements</label>
+                        <div class="mt-2 space-y-2">
+                            <div class="flex items-center">
+                                <input id="drumSet" name="requirements" type="checkbox" value="Drum Set" class="h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                <label for="drumSet" class="ml-2 block text-sm text-gray-700">Drum Set</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="electricGuitar" name="requirements" type="checkbox" value="Electric Guitar" class="h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                <label for="electricGuitar" class="ml-2 block text-sm text-gray-700">Electric Guitar</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input id="keyboard" name="requirements" type="checkbox" value="Keyboard" class="h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                <label for="keyboard" class="ml-2 block text-sm text-gray-700">Keyboard</label>
+                            </div>
+                            <!-- New "Nothing from above" checkbox -->
+                            <div class="flex items-center">
+                                <input id="nothingAbove" name="requirements" type="checkbox" value="Nothing from above" class="h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                                <label for="nothingAbove" class="ml-2 block text-sm text-gray-700">Nothing from above</label>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                dynamicFieldContainer.innerHTML = checkboxHtml;
+                const checkboxes = dynamicFieldContainer.querySelectorAll('input[type="checkbox"]');
+                const nothingAboveCheckbox = document.getElementById('nothingAbove');
+                const equipmentCheckboxes = document.querySelectorAll('#drumSet, #electricGuitar, #keyboard');
+
+                checkboxes.forEach(cb => {
+                    cb.addEventListener('change', (e) => {
+                        if (e.target === nothingAboveCheckbox) {
+                            if (e.target.checked) {
+                                equipmentCheckboxes.forEach(eqCb => {
+                                    eqCb.checked = false;
+                                    eqCb.disabled = true;
+                                });
+                            } else {
+                                equipmentCheckboxes.forEach(eqCb => {
+                                    eqCb.disabled = false;
+                                });
+                            }
+                        } else {
+                            if (e.target.checked) {
+                                nothingAboveCheckbox.checked = false;
+                                nothingAboveCheckbox.disabled = true;
+                            } else {
+                                const anyEquipmentChecked = Array.from(equipmentCheckboxes).some(eqCb => eqCb.checked);
+                                if (!anyEquipmentChecked) {
+                                    nothingAboveCheckbox.disabled = false;
+                                }
+                            }
+                        }
+
+                        const dynamicValue = Array.from(dynamicFieldContainer.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value).join(', ');
+                        updateRecommendation(performanceType, dynamicValue, recommendationMessageDiv, studioSelectContainer, 'studioSelect');
+                        // Fix: Enable the next field (studio) after a selection is made
+                        const studioElement = studioSelectContainer.querySelector('[name="studioSelect"]');
+                        if (dynamicValue) {
+                            studioElement.disabled = false;
+                            studioElement.classList.remove('cursor-not-allowed');
+                        } else {
+                            studioElement.disabled = true;
+                            studioElement.classList.add('cursor-not-allowed');
+                        }
+                    });
+                });
+            }
+        });
+
+        studioSelectContainer.addEventListener('change', () => {
+             dateInput.disabled = false;
+             dateInput.classList.remove('cursor-not-allowed');
+             dateMessage.classList.remove('hidden'); // Show the date message
+             checkFormValidity();
+        });
+
+        dateInput.addEventListener('change', () => {
+            // Get the selected studio to determine the time range
+            const selectedStudio = studioSelectContainer.querySelector('[name="studioSelect"]').value;
+            const studioHours = studioTimeRanges[selectedStudio] || { start: 8, end: 22 };
+
+            // Enable start time when the date is selected
+            startTimeSelect.disabled = false;
+            startTimeSelect.classList.remove('cursor-not-allowed');
+            // Populate the start time dropdown with all possible options
+            populateTimeSelect(startTimeSelect, studioHours.start, studioHours.end - 1, 'Choose a start time');
+            // Disable end time and reset it
+            endTimeSelect.disabled = true;
+            endTimeSelect.classList.add('cursor-not-allowed');
+            endTimeSelect.innerHTML = '<option value="" disabled selected>Choose a start time first</option>';
+            dateMessage.classList.add('hidden'); // Hide the message once a date is selected
+            checkFormValidity();
+        });
+        
+        // --- New "Cancel" Button Logic ---
+        cancelDateInput.addEventListener('change', () => {
+             if (cancelDateInput.value) {
+                nextCancelButton.disabled = false;
+                nextCancelButton.classList.remove('disabled:opacity-50', 'disabled:cursor-not-allowed');
+            } else {
+                nextCancelButton.disabled = true;
+                nextCancelButton.classList.add('disabled:opacity-50', 'disabled:cursor-not-allowed');
+            }
+        });
+
+        nextCancelButton.addEventListener('click', () => {
+            if (cancelDateInput.value) {
+                const date = formatDateForSummary(cancelDateInput.value);
+                cancelSummaryDiv.innerHTML = `
+                    <p class="text-sm text-gray-600 mb-2">Please review your cancellation request before sending:</p>
+                    <ul class="list-disc list-inside space-y-1 text-sm font-medium text-gray-700">
+                        <li><strong>Date to be Cancelled:</strong> ${date}</li>
+                    </ul>
+                `;
+                step1Cancel.classList.remove('active');
+                step2Cancel.classList.add('active');
+            } else {
+                form.reportValidity();
+            }
+        });
+
+        backCancelButton.addEventListener('click', () => {
+            step2Cancel.classList.remove('active');
+            step1Cancel.classList.add('active');
+        });
+        
+        sendCancelButton.addEventListener('click', () => {
+            const date = formatDateForSummary(cancelDateInput.value);
+            const phoneNumber = studioPhoneNumbers['Studio A']; // Or any other default number
+
+            const message = `*Cancellation Request*
+-----------------------------
+- I would like to cancel my booking.
+- Date: ${date}
+-----------------------------
+`;
+            const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappLink, '_blank');
+        });
+        // --- End "Cancel" Button Logic ---
+        
+        // --- Updated "Change" Button Logic for sequential flow ---
+        
+        // This function renders all the fields for the selected checkboxes at once
+        function renderAllSelectedFields() {
+            const selectedOptions = Array.from(changeCheckboxes)
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+            
+            dynamicChangeFieldsDiv.innerHTML = '';
+            
+            selectedOptions.forEach(option => {
+                let inputHtml = '';
+                
+                // Build the HTML for the current field group
+                switch(option) {
+                    case 'Session type':
+                        inputHtml = `
+                            <div id="fieldGroup-Session type">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Earlier Session Type</label>
+                                    <select name="earlierSessionType" data-target="newSessionType" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm earlier-field" required>
+                                        <option value="" disabled selected>Select earlier type</option>
+                                        <option value="Karaoke">Karaoke</option>
+                                        <option value="Live with musicians">Live with musicians</option>
+                                        <option value="Band">Band</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">New Session Type</label>
+                                    <select name="newSessionType" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm cursor-not-allowed new-field" disabled required>
+                                        <option value="" disabled selected>Select new type</option>
+                                    </select>
+                                </div>
+                                <div id="newSessionDependentFields" class="space-y-4"></div>
+                            </div>
+                        `;
+                        break;
+                    case 'Studio':
+                        inputHtml = `
+                             <div id="fieldGroup-Studio">
+                                 <div>
+                                    <label class="block text-sm font-medium text-gray-700">Earlier Studio</label>
+                                    <select name="earlierStudio" data-target="newStudio" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm earlier-field" required>
+                                        <option value="" disabled selected>Select earlier studio</option>
+                                        <option value="Studio C">Studio C</option>
+                                        <option value="Studio B">Studio B</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">New Studio</label>
+                                    <select name="newStudio" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm cursor-not-allowed new-field" disabled required>
+                                        <option value="" disabled selected>Select new studio</option>
+                                    </select>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 'Date':
+                        inputHtml = `
+                            <div id="fieldGroup-Date">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Earlier Date</label>
+                                    <input type="date" name="earlierDate" data-target="newDate" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm earlier-field" required>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">New Date</label>
+                                    <input type="date" name="newDate" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm cursor-not-allowed new-field" disabled required>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 'Start Time':
+                        inputHtml = `
+                            <div id="fieldGroup-Start Time">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Earlier Start Time</label>
+                                    <select name="earlierStartTime" data-target="newStartTime" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm earlier-field" required>
+                                        <option value="" disabled selected>Select earlier time</option>
+                                        ${generateTimeOptions(8, 21)}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">New Start Time</label>
+                                    <select name="newStartTime" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm cursor-not-allowed new-field" disabled required>
+                                        <option value="" disabled selected>Select new time</option>
+                                        ${generateTimeOptions(8, 21)}
+                                    </select>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                    case 'End Time':
+                        inputHtml = `
+                            <div id="fieldGroup-End Time">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Earlier End Time</label>
+                                    <select name="earlierEndTime" data-target="newEndTime" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm earlier-field" required>
+                                        <option value="" disabled selected>Select earlier time</option>
+                                        ${generateTimeOptions(9, 22)}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">New End Time</label>
+                                    <select name="newEndTime" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm cursor-not-allowed new-field" disabled required>
+                                        <option value="" disabled selected>Select new time</option>
+                                        ${generateTimeOptions(9, 22)}
+                                    </select>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                }
+                dynamicChangeFieldsDiv.innerHTML += inputHtml;
+            });
+            
+            // Add listeners to enable new fields on earlier field change
+            addEventListenersToNewChangeFields();
+        }
+        
+        // This function adds the necessary event listeners to the newly created fields
+        function addEventListenersToNewChangeFields() {
+             const earlierFields = dynamicChangeFieldsDiv.querySelectorAll('.earlier-field');
+             earlierFields.forEach(earlierField => {
+                 earlierField.addEventListener('change', (e) => {
+                     const targetName = e.target.dataset.target;
+                     const newField = document.querySelector(`[name="${targetName}"]`);
+                     if(newField) {
+                         newField.disabled = false;
+                         newField.classList.remove('cursor-not-allowed');
+                     }
+
+                     // Special logic for new session type fields
+                     if (e.target.name === 'earlierSessionType') {
+                        const newSessionTypeSelect = document.querySelector('[name="newSessionType"]');
+                        // Populate new session type dropdown with all options
+                        const allSessionOptions = ['Karaoke', 'Live with musicians', 'Band'];
+                        let newOptionsHtml = '<option value="" disabled selected>Select new type</option>';
+                        allSessionOptions.forEach(opt => {
+                            newOptionsHtml += `<option value="${opt}">${opt}</option>`;
+                        });
+                        newSessionTypeSelect.innerHTML = newOptionsHtml;
+                     }
+                      
+                     // Special logic for new studio fields
+                     if (e.target.name === 'earlierStudio') {
+                        const newStudioSelect = document.querySelector('[name="newStudio"]');
+                        let newStudioOptions = [];
+                        if (e.target.value === 'Studio C') {
+                            newStudioOptions = ['Studio B', 'Studio A'];
+                        } else if (e.target.value === 'Studio B') {
+                            newStudioOptions = ['Studio A'];
+                        }
+
+                        let newOptionsHtml = '<option value="" disabled selected>Select new studio</option>';
+                        newStudioOptions.forEach(opt => {
+                            newOptionsHtml += `<option value="${opt}">${opt}</option>`;
+                        });
+                        newStudioSelect.innerHTML = newOptionsHtml;
+                     }
+
+                     // Set date range for dynamically created date inputs
+                     if (e.target.name.includes('Date')) {
+                         const today = new Date();
+                         const tomorrow = new Date(today);
+                         tomorrow.setDate(today.getDate() + 1);
+                         const fourMonthsLater = new Date(today);
+                         fourMonthsLater.setMonth(today.getMonth() + 4);
+                         
+                         const tomorrowFormatted = formatDateForInput(tomorrow);
+                         const fourMonthsLaterFormatted = formatDateForInput(fourMonthsLater);
+
+                         earlierField.min = tomorrowFormatted;
+                         earlierField.max = fourMonthsLaterFormatted;
+                         if (newField) {
+                             newField.min = tomorrowFormatted;
+                             newField.max = fourMonthsLaterFormatted;
+                         }
+                     }
+                 });
+             });
+             
+             // Check validation on every change in the dynamic fields
+             const allFields = dynamicChangeFieldsDiv.querySelectorAll('input, select');
+             allFields.forEach(field => {
+                 field.addEventListener('change', checkChangeFormValidity);
+             });
+        }
+        
+        function checkChangeFormValidity() {
+            const allDynamicFields = dynamicChangeFieldsDiv.querySelectorAll('input:not([disabled]), select:not([disabled])');
+            const isEarlierDateSelected = earlierBookingDateInput.value !== '';
+            let formIsValid = isEarlierDateSelected;
+            
+            if(allDynamicFields.length === 0) {
+                 formIsValid = isEarlierDateSelected;
+            } else {
+                 allDynamicFields.forEach(field => {
+                     if (!field.value) { // Simple check for empty values
+                         formIsValid = false;
+                     }
+                 });
+            }
+            
+            if (formIsValid) {
+                 nextChangeButton.disabled = false;
+                 nextChangeButton.classList.remove('disabled:opacity-50', 'disabled:cursor-not-allowed');
+            } else {
+                 nextChangeButton.disabled = true;
+                 nextChangeButton.classList.add('disabled:opacity-50', 'disabled:cursor-not-allowed');
+            }
+        }
+
+        // Listen for changes on the new mandatory date field
+        earlierBookingDateInput.addEventListener('change', checkChangeFormValidity);
+
+        changeCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                renderAllSelectedFields();
+                checkChangeFormValidity();
+            });
+        });
+
+        nextChangeButton.addEventListener('click', () => {
+            const selectedOptions = Array.from(changeCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+            
+            if (selectedOptions.length === 0) {
+                form.reportValidity();
+                return;
+            }
+            
+            const dynamicFields = dynamicChangeFieldsDiv.querySelectorAll('input:not([disabled]), select:not([disabled])');
+            let formIsValid = earlierBookingDateInput.value !== '';
+
+            dynamicFields.forEach(field => {
+                if (field.value.trim() === '' || field.value === null) {
+                    formIsValid = false;
+                }
+            });
+
+            if (!formIsValid) {
+                form.reportValidity(); 
+                return;
+            }
+            
+            const earlierDate = formatDateForSummary(earlierBookingDateInput.value);
+            
+            let summaryHtml = `<p class="text-sm text-gray-600 mb-2">Please review your change request before sending:</p><ul class="list-disc list-inside space-y-1 text-sm font-medium text-gray-700">`;
+            summaryHtml += `<li><strong>Earlier Booking Date:</strong> ${earlierDate}</li>`;
+            
+            selectedOptions.forEach(option => {
+                let earlierValue, newValue;
+                
+                switch(option) {
+                    case 'Session type':
+                        earlierValue = document.querySelector('[name="earlierSessionType"]').value;
+                        newValue = document.querySelector('[name="newSessionType"]').value;
+                        summaryHtml += `<li><strong>Session Type:</strong> ${earlierValue} <span class="text-gray-500">→</span> ${newValue}</li>`;
+                        break;
+                    case 'Studio':
+                        earlierValue = document.querySelector('[name="earlierStudio"]').value;
+                        newValue = document.querySelector('[name="newStudio"]').value;
+                        summaryHtml += `<li><strong>${option}:</strong> ${earlierValue} <span class="text-gray-500">→</span> ${newValue}</li>`;
+                        break;
+                    case 'Date':
+                        earlierValue = formatDateForSummary(document.querySelector('[name="earlierDate"]').value);
+                        newValue = formatDateForSummary(document.querySelector('[name="newDate"]').value);
+                        summaryHtml += `<li><strong>${option}:</strong> ${earlierValue} <span class="text-gray-500">→</span> ${newValue}</li>`;
+                        break;
+                    case 'Start Time':
+                        earlierValue = document.querySelector('[name="earlierStartTime"]').options[document.querySelector('[name="earlierStartTime"]').selectedIndex].text;
+                        newValue = document.querySelector('[name="newStartTime"]').options[document.querySelector('[name="newStartTime"]').selectedIndex].text;
+                        summaryHtml += `<li><strong>${option}:</strong> ${earlierValue} <span class="text-gray-500">→</span> ${newValue}</li>`;
+                        break;
+                    case 'End Time':
+                        earlierValue = document.querySelector('[name="earlierEndTime"]').options[document.querySelector('[name="earlierEndTime"]').selectedIndex].text;
+                        newValue = document.querySelector('[name="newEndTime"]').options[document.querySelector('[name="newEndTime"]').selectedIndex].text;
+                        summaryHtml += `<li><strong>${option}:</strong> ${earlierValue} <span class="text-gray-500">→</span> ${newValue}</li>`;
+                        break;
+                }
+            });
+            
+            summaryHtml += '</ul>';
+            changeSummaryDiv.innerHTML = summaryHtml;
+            
+            step1Change.classList.remove('active');
+            step2Change.classList.add('active');
+        });
+
+        backChangeButton.addEventListener('click', () => {
+            step2Change.classList.remove('active');
+            step1Change.classList.add('active');
+        });
+        
+        sendChangeButton.addEventListener('click', () => {
+             const selectedOptions = Array.from(changeCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+             const phoneNumber = studioPhoneNumbers['Studio A'];
+             const earlierDate = formatDateForSummary(earlierBookingDateInput.value);
+             
+             let message = `*Booking Change Request*
+-----------------------------
+- Earlier Booking Date: ${earlierDate}
+- I would like to change my booking.
+- Details:
+`;
+            
+            selectedOptions.forEach(option => {
+                let earlierValue, newValue;
+                
+                switch(option) {
+                    case 'Session type':
+                        earlierValue = document.querySelector('[name="earlierSessionType"]').value;
+                        newValue = document.querySelector('[name="newSessionType"]').value;
+                        message += `  - Session Type: ${earlierValue} -> ${newValue}\n`;
+                        break;
+                    case 'Studio':
+                        earlierValue = document.querySelector('[name="earlierStudio"]').value;
+                        newValue = document.querySelector('[name="newStudio"]').value;
+                        message += `  - ${option}: ${earlierValue} -> ${newValue}\n`;
+                        break;
+                    case 'Date':
+                        earlierValue = formatDateForSummary(document.querySelector('[name="earlierDate"]').value);
+                        newValue = formatDateForSummary(document.querySelector('[name="newDate"]').value);
+                        message += `  - ${option}: ${earlierValue} -> ${newValue}\n`;
+                        break;
+                    case 'Start Time':
+                        earlierValue = document.querySelector('[name="earlierStartTime"]').options[document.querySelector('[name="earlierStartTime"]').selectedIndex].text;
+                        newValue = document.querySelector('[name="newStartTime"]').options[document.querySelector('[name="newStartTime"]').selectedIndex].text;
+                        message += `  - ${option}: ${earlierValue} -> ${newValue}\n`;
+                        break;
+                    case 'End Time':
+                        earlierValue = document.querySelector('[name="earlierEndTime"]').options[document.querySelector('[name="earlierEndTime"]').selectedIndex].text;
+                        newValue = document.querySelector('[name="newEndTime"]').options[document.querySelector('[name="newEndTime"]').selectedIndex].text;
+                        message += `  - ${option}: ${earlierValue} -> ${newValue}\n`;
+                        break;
+                }
+            });
+
+            message += `-----------------------------`;
+            
+            const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappLink, '_blank');
+        });
+        // --- End "Change" Button Logic ---
+
+        startTimeSelect.addEventListener('change', () => {
+            const selectedHour = parseInt(startTimeSelect.value.split(':')[0], 10);
+            const selectedStudio = studioSelectContainer.querySelector('[name="studioSelect"]').value;
+            const studioHours = studioTimeRanges[selectedStudio] || { start: 8, end: 22 };
+            populateTimeSelect(endTimeSelect, selectedHour + 1, studioHours.end, 'Choose an end time');
+            endTimeSelect.disabled = false;
+            endTimeSelect.classList.remove('cursor-not-allowed');
+            checkFormValidity();
+        });
+
+        endTimeSelect.addEventListener('change', () => {
+            checkFormValidity();
+        });
+        
+        // Function to format a date to YYYY-MM-DD for input min/max
+        function formatDateForInput(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // Function to format date from YYYY-MM-DD to DD Mon YYYY for summary
+        function formatDateForSummary(dateString) {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const date = new Date(dateString.replace(/-/g, '/')); // Use replace to ensure cross-browser compatibility
+            const day = date.getDate();
+            const month = months[date.getMonth()];
+            const year = date.getFullYear();
+            return `${day} ${month} ${year}`;
+        }
+        
+        // Utility function to generate time options for select dropdown
+        function generateTimeOptions(startHour, endHour) {
+            let optionsHtml = '';
+            for (let i = startHour; i <= endHour; i++) {
+                const hour24 = String(i).padStart(2, '0');
+                const timeValue = `${hour24}:00`;
+                const hour12 = i % 12 || 12;
+                const ampm = i < 12 ? 'AM' : 'PM';
+                const timeText = `${String(hour12).padStart(2, '0')}:00 ${ampm}`;
+                optionsHtml += `<option value="${timeValue}">${timeText}</option>`;
+            }
+            return optionsHtml;
+        }
+        
+        // Fixed function to populate time select, including a placeholder
+        function populateTimeSelect(selectElement, startHour, endHour, placeholderText) {
+            const optionsHtml = generateTimeOptions(startHour, endHour);
+            selectElement.innerHTML = `<option value="" disabled selected>${placeholderText}</option>${optionsHtml}`;
+        }
+
+        // Add event listener for the "Next" button
+        nextButton.addEventListener('click', function() {
+            // Check form validity based on the logic we have in checkFormValidity()
+            if (nextButton.disabled) {
+                // If the button is disabled, the form is not valid.
+                // We can optionally show a message here, but the button's disabled state is the primary feedback.
+                form.reportValidity(); // This will show native browser validation messages
+                return;
+            }
+
+            const studio = studioSelectContainer.querySelector('[name="studioSelect"]').value;
+            const performanceType = performanceTypeSelect.value;
+            const date = formatDateForSummary(dateInput.value); 
+            const startTime = startTimeSelect.options[startTimeSelect.selectedIndex].text;
+            const endTime = endTimeSelect.options[endTimeSelect.selectedIndex].text;
+            
+            let dynamicValue = '';
+            let dynamicLabel = '';
+            if (performanceType === 'Band') {
+                const requirements = Array.from(document.querySelectorAll('input[name="requirements"]:checked')).map(cb => cb.value);
+                dynamicValue = requirements.length > 0 ? requirements.join(', ') : 'None specified';
+                dynamicLabel = 'Requirements';
+            } else {
+                const dynamicSelect = dynamicFieldContainer.querySelector('select');
+                if (dynamicSelect) {
+                    dynamicValue = dynamicSelect.value;
+                    dynamicLabel = performanceType === 'Karaoke' ? 'Participants' : 'Musicians';
+                }
+            }
+            
+            const rate = getRate(performanceType, dynamicValue, studio);
+            
+            const duration = parseInt(endTimeSelect.value) - parseInt(startTimeSelect.value);
+            const rateValue = parseInt(rate.replace(/[^0-9]/g, ''));
+            const totalAmount = rateValue * duration;
+
+            summaryDiv.innerHTML = `
+                <p class="text-sm text-gray-600 mb-2">Please review your booking details before sending:</p>
+                <ul class="list-disc list-inside space-y-1 text-sm font-medium text-gray-700">
+                    <li><strong>Studio:</strong> ${studio}</li>
+                    <li><strong>Date:</strong> ${date}</li>
+                    <li><strong>Time:</strong> ${startTime} - ${endTime}</li>
+                    <li><strong>Performance:</strong> ${performanceType}</li>
+                    <li><strong>${dynamicLabel}:</strong> ${dynamicValue}</li>
+                    <li><strong>Rate:</strong> ${rate}</li>
+                    <li><strong>Total Amount:</strong> Rs ${totalAmount}</li>
+                </ul>
+            `;
+
+            step1New.classList.remove('active');
+            step2New.classList.add('active');
+        });
+
+        backButton.addEventListener('click', function() {
+            step2New.classList.remove('active');
+            step1New.classList.add('active');
+        });
+
+        // The fix: Changed the button type to "button" and added a direct click listener.
+        sendButton.addEventListener('click', async function(event) {
+            const studio = studioSelectContainer.querySelector('[name="studioSelect"]').value;
+            const performanceType = performanceTypeSelect.value;
+            const date = formatDateForSummary(dateInput.value);
+            const startTime = startTimeSelect.options[startTimeSelect.selectedIndex].text;
+            const endTime = endTimeSelect.options[endTimeSelect.selectedIndex].text;
+            
+            const phoneNumber = studioPhoneNumbers[studio];
+
+            if (!phoneNumber) {
+                return;
+            }
+            
+            let dynamicValue = '';
+            let dynamicLabel = '';
+            if (performanceType === 'Band') {
+                const requirements = Array.from(document.querySelectorAll('input[name="requirements"]:checked')).map(cb => cb.value);
+                dynamicValue = requirements.length > 0 ? requirements.join(', ') : 'None specified';
+                dynamicLabel = 'Requirements';
+            } else {
+                const dynamicSelect = dynamicFieldContainer.querySelector('select');
+                if (dynamicSelect) {
+                    dynamicValue = dynamicSelect.value;
+                    dynamicLabel = performanceType === 'Karaoke' ? 'Participants' : 'Musicians';
+                }
+            }
+
+            const rate = getRate(performanceType, dynamicValue, studio);
+            const duration = parseInt(endTimeSelect.value) - parseInt(startTimeSelect.value);
+            const rateValue = parseInt(rate.replace(/[^0-9]/g, ''));
+            const totalAmount = rateValue * duration;
+
+            const message = `*New Booking Request*
+-----------------------------
+- Studio: ${studio}
+- Date: ${date}
+- Time: ${startTime} - ${endTime}
+- Performance: ${performanceType}
+- ${dynamicLabel}: ${dynamicValue}
+- Rate: ${rate}
+- Total Amount: Rs ${totalAmount}
+-----------------------------
+`;
+            
+            const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappLink, '_blank');
+        });
+        
+        window.onload = function() {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+            
+            const fourMonthsLater = new Date(today);
+            fourMonthsLater.setMonth(today.getMonth() + 4);
+            // If the day is greater than the new month's last day, it auto-adjusts, which is what we want.
+
+            const tomorrowFormatted = formatDateForInput(tomorrow);
+            const fourMonthsLaterFormatted = formatDateForInput(fourMonthsLater);
+
+            // Set min and max for all date inputs
+            dateInput.min = tomorrowFormatted;
+            dateInput.max = fourMonthsLaterFormatted;
+            cancelDateInput.min = tomorrowFormatted;
+            cancelDateInput.max = fourMonthsLaterFormatted;
+            earlierBookingDateInput.min = tomorrowFormatted;
+            earlierBookingDateInput.max = fourMonthsLaterFormatted;
+            const earlierDateInput = document.querySelector('[name="earlierDate"]');
+            if (earlierDateInput) {
+                earlierDateInput.min = tomorrowFormatted;
+                earlierDateInput.max = fourMonthsLaterFormatted;
+            }
+        };
+    </script>
+</body>
+</html>
